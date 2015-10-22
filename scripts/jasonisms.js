@@ -22,7 +22,7 @@ module.exports = function( robot ) {
           "We don't NEED an agenda!",
           "Let's just go around the room!",
           "Who wants to start?",
-          "CLAP IT OUT!"
+          "You guys know how we love to start; with a big clap. Clap it up, lets go! :clap: :clap: :clap:"
       ]));
     }, 1000);
   });
