@@ -6,7 +6,7 @@ module.exports = function( robot ) {
     "http://blogs.msdn.com/blogfiles/mikewalker/WindowsLiveWriter/MappingCurrentStateArchitecturesacrossth_AFD0/image_10.png"
   ];
 
-  return robot.hear( /datagram/i, function( res ) {
+  robot.hear( /datagram/i, function( res ) {
     res.send( "Did somebody say... DATAGRAM?" );
     return setTimeout(function() {
       res.send( "Let me show you how they work..." );
@@ -14,7 +14,7 @@ module.exports = function( robot ) {
     }, 2000);
   });
 
-  return robot.hear( /meeting/i, function( res ) {
+  robot.hear( /meeting/i, function( res ) {
     res.send( "Jam sesh?" );
     return setTimeout(function() {
       return res.send( res.random([
