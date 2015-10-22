@@ -13,4 +13,17 @@ module.exports = function( robot ) {
       return res.send( res.random( datagrams ) );
     }, 2000);
   });
+
+  return robot.hear( /meeting/i, function( res ) {
+    res.send( "Jam sesh?" );
+    return setTimeout(function() {
+      return res.send( res.random([
+          "You wanna jam it out?",
+          "We don't NEED an agenda!",
+          "Let's just go around the room!",
+          "Who wants to start?",
+          "CLAP IT OUT!"
+      ]));
+    }, 1000);
+  });
 };
