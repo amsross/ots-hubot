@@ -14,6 +14,13 @@ module.exports = function( robot ) {
     }, 2000);
   });
 
+  robot.hear( /performance review/i, function( res ) {
+    res.send( "Performance reviews?" );
+    return setTimeout(function() {
+      return res.send( "We'll do them in " + Math.floor(Math.random() * (18 - 2) + 2) + " days. I'll send you an invite" );
+    }, 2000);
+  });
+
   robot.hear( /meeting/i, function( res ) {
     res.send( "Jam sesh?" );
     return setTimeout(function() {
