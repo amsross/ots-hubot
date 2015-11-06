@@ -17,7 +17,10 @@ module.exports = function( robot ) {
   robot.hear( /performance review/i, function( res ) {
     res.send( "Performance reviews?" );
     return setTimeout(function() {
-      return res.send( "We'll do them in " + Math.floor(Math.random() * (18 - 2) + 2) + " days. I'll send you an invite" );
+      return res.send( res.random([
+        "We'll do them in " + Math.floor(Math.random() * (18 - 2) + 2) + " days. I'll send you an invite.",
+        "You'll get a performance review when I friggin' feel like it."
+      ]));
     }, 2000);
   });
 
@@ -25,11 +28,11 @@ module.exports = function( robot ) {
     res.send( "Jam sesh?" );
     return setTimeout(function() {
       return res.send( res.random([
-          "You wanna jam it out?",
-          "We don't NEED an agenda!",
-          "Let's just go around the room!",
-          "Who wants to start?",
-          "You guys know how we love to start; with a big clap. Clap it up, lets go! :clap: :clap: :clap:"
+        "You wanna jam it out?",
+        "We don't NEED an agenda!",
+        "Let's just go around the room!",
+        "Who wants to start?",
+        "You guys know how we love to start; with a big clap. Clap it up, lets go! :clap: :clap: :clap:"
       ]));
     }, 1000);
   });
