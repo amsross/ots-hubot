@@ -16,7 +16,7 @@ module.exports = function( robot ) {
     var pass = process.env.BAMBOO_PASS;
 
     if ( !room || !planKey || !buildNumber || !host || !port || !user || !pass ) {
-      return null;
+      return res.end( JSON.stringify( "FAIL" ) );
     }
 
     var auth = user + ':' + pass;
@@ -25,8 +25,10 @@ module.exports = function( robot ) {
     return robot.http( url )
       .query({ "os_authType": "basic" })
       .headers({ Authorization: "Basic " + new Buffer(user + ':' + pass).toString('base64') })
-      .get()(function( err, res, body ) {
-        if ( err ) return err;
+      .get()(function( err, response, body ) {
+        if ( err ) {
+          return res.end( JSON.stringify( err ) );
+        }
 
         var json = JSON.parse( body );
         var fields = [];
@@ -41,7 +43,7 @@ module.exports = function( robot ) {
           short: true,
         });
 
-        return robot.emit( "slack-attachment", {
+        robot.emit( "slack-attachment", {
           channel: room,
           message: "message",
           content: {
@@ -52,6 +54,8 @@ module.exports = function( robot ) {
             fields: fields
           }
         });
+
+        return res.end( JSON.stringify( "OK" ) );
       });
   });
 };
