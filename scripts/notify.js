@@ -22,7 +22,7 @@ module.exports = function( robot ) {
     var auth = user + ':' + pass;
     var url  = "http://" + host + ":"  + port + "/rest/api/latest/result/" + buildKey + "/" + buildNumber + ".json";
 
-    return setTimeout(function() {
+    setTimeout(function() {
       return robot.http( url )
         .query({ "os_authType": "basic" })
         .headers({ Authorization: "Basic " + new Buffer(user + ':' + pass).toString('base64') })
@@ -55,9 +55,9 @@ module.exports = function( robot ) {
               fields: fields
             }
           });
-
-          return res.end( body );
         });
     }, 5000);
+
+    return res.end( JSON.stringify( "OK" ) );
   });
 };
