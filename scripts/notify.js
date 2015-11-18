@@ -56,7 +56,7 @@ module.exports = function( robot ) {
             }
           });
 
-          return res.end( JSON.stringify( "OK" ) );
+          return res.end( json );
         });
     }, 5000);
   });
