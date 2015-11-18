@@ -22,40 +22,42 @@ module.exports = function( robot ) {
     var auth = user + ':' + pass;
     var url  = "http://" + host + ":"  + port + "/rest/api/latest/result/" + buildKey + "/" + buildNumber + ".json";
 
-    return robot.http( url )
-      .query({ "os_authType": "basic" })
-      .headers({ Authorization: "Basic " + new Buffer(user + ':' + pass).toString('base64') })
-      .get()(function( err, response, body ) {
-        if ( err ) {
-          return res.end( JSON.stringify( err ) );
-        }
-
-        var json = JSON.parse( body );
-        var fields = [];
-        fields.push({
-          title: "Successful Tests",
-          value: json.successfulTestCount,
-          short: true,
-        });
-        fields.push({
-          title: "Failed Tests",
-          value: json.failedTestCount,
-          short: true,
-        });
-
-        robot.emit( "slack-attachment", {
-          channel: room,
-          message: "message",
-          content: {
-            text: json.state,
-            fallback: "Build Results: " + json.plan.name,
-            pretext: json.plan.name + "\nhttp://" + host + ":" + port + "/browse/" + json.key,
-            color: (json.state == "Successful") ? "good" : (json.state == "Failed") ? "danger" : "warning",
-            fields: fields
+    return setTimeout(function() {
+      return robot.http( url )
+        .query({ "os_authType": "basic" })
+        .headers({ Authorization: "Basic " + new Buffer(user + ':' + pass).toString('base64') })
+        .get()(function( err, response, body ) {
+          if ( err ) {
+            return res.end( JSON.stringify( err ) );
           }
-        });
 
-        return res.end( JSON.stringify( "OK" ) );
-      });
+          var json = JSON.parse( body );
+          var fields = [];
+          fields.push({
+            title: "Successful Tests",
+            value: json.successfulTestCount,
+            short: true,
+          });
+          fields.push({
+            title: "Failed Tests",
+            value: json.failedTestCount,
+            short: true,
+          });
+
+          robot.emit( "slack-attachment", {
+            channel: room,
+            message: "message",
+            content: {
+              text: json.state,
+              fallback: "Build Results: " + json.plan.name,
+              pretext: json.plan.name + "\nhttp://" + host + ":" + port + "/browse/" + json.key,
+              color: (json.state == "Successful") ? "good" : (json.state == "Failed") ? "danger" : "warning",
+              fields: fields
+            }
+          });
+
+          return res.end( JSON.stringify( "OK" ) );
+        });
+    }, 5000);
   });
 };
