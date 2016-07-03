@@ -1,3 +1,19 @@
+// Description:
+//   Jasonisms
+//
+// Dependencies:
+//   None
+//
+// Configuration:
+//   None
+//
+// Commands:
+//   hubot datagram - a nice clear, concise explanation
+//   hubot permormance review - get the performance review schedule
+//   hubot meeting - just don't
+//
+// Author:
+//   amsross
 
 module.exports = function( robot ) {
 
@@ -11,7 +27,7 @@ module.exports = function( robot ) {
     return setTimeout(function() {
       res.send( "Let me show you how they work..." );
       return res.send( res.random( datagrams ) );
-    }, 2000);
+    }, 1500);
   });
 
   robot.hear( /performance review/i, function( res ) {
@@ -21,7 +37,7 @@ module.exports = function( robot ) {
         "We'll do them in " + Math.floor(Math.random() * (18 - 2) + 2) + " days. I'll send you an invite.",
         "You'll get a performance review when I friggin' feel like it."
       ]));
-    }, 2000);
+    }, 1500);
   });
 
   robot.hear( /meeting/i, function( res ) {
