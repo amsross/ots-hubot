@@ -8,6 +8,9 @@
     "test": "./node_modules/mocha/bin/mocha test"
   },
   "dependencies": {
+    "crypto": "0.0.3",
+    "githubot": "^1.0.0",
+    "highland": "^2.8.1",
     "hubot": "^2.6.5",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.2.6",
