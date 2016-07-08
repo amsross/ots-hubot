@@ -53,4 +53,46 @@ module.exports = function (robot) {
         return;
       });
   });
+
+  robot.respond(/why is\s(.)*train\s(.)*late/i, function(msg) {
+    var reasons = [
+      'equipment problems',
+      'a problem with the equipment',
+      'signaling problems',
+      'a problem with signals',
+      'slippery rail season',
+      'inclement weather conditions',
+      'hot rail season',
+      'overheating rail conditions',
+      'overhead wire problems',
+      'caternary displacement syndrome',
+      'communication problems',
+      'railroad congestion',
+      'unusually high volume',
+      'low electrolytes',
+      'irritable bowel syndrome',
+      'a small kitten on the tracks',
+      'a penny on the tracks',
+      'a horse on the tracks',
+      'a family of small horses running alongside the tracks',
+      'it being Friday somewhere',
+      'the conductor being drunk',
+      'the engineer being high',
+      'improper implementation of train.js',
+      'a bear on the tracks',
+      'an unrelated boating accident',
+      'the string cheese incident',
+      'a rogue train',
+      'this economy',
+      'bees',
+      'errant triangulation residuals',
+      'reticulating splines',
+      'wine day',
+      'insufficient memory',
+      'low turn signal fluid',
+      'johansen rod decoupling effect'
+    ];
+    var reason = reasons[Math.floor(Math.random()*reasons.length)];
+    return msg.send('The train is late due to '+reason+'.');
+  });
 };
