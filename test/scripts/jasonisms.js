@@ -1,6 +1,5 @@
 "use strict";
 
-var assert = require("assert");
 var Helper = require("hubot-test-helper")
 
 class MockResponse extends Helper.Response {

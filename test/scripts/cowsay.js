@@ -1,5 +1,4 @@
-var assert = require("assert");
-var Helper = require("hubot-test-helper")
+var Helper = require("hubot-test-helper");
 
 describe("cowsay", function() {
 
