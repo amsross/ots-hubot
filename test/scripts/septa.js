@@ -1,7 +1,7 @@
 var assert = require("assert");
 var Helper = require("hubot-test-helper")
 
-describe.only("septa", function() {
+describe("septa", function() {
 
   before(function() {
     this.helper = new Helper("../../scripts/septa.js");
