@@ -46,7 +46,15 @@ module.exports = function (robot) {
           .map(_.partial(_.pick, _, "onestop_id", "name", "short_name"))
           .value();
 
-        var fuse = new Fuse(operators, { keys: ["name", "short_name"] });
+        var fuse = new Fuse(operators, {
+          keys: [{
+            name: "short_name",
+            weight: 0.7,
+          }, {
+            name: "name",
+            weight: 0.3,
+          }],
+        });
         var result = _.first(fuse.search(line));
 
         if ( !result ) {
