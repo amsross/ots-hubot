@@ -122,7 +122,7 @@ module.exports = function (robot) {
     });
   });
 
-  robot.respond(/(stop|line) (.*) id is (.*)/i, function(msg) {
+  robot.respond(/transit (stop|line) (.*) id is (.*)/i, function(msg) {
     var type = msg.match[1].trim().toLowerCase();
     var name = msg.match[2].trim().toLowerCase();
     var osid = msg.match[3].trim();

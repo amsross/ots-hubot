@@ -76,7 +76,7 @@ describe("transitland", function() {
 
     beforeEach(function(done) {
       this.room.user.say("alice", "hubot next train on patco from work");
-      setTimeout( done, 1000 );
+      setTimeout( done, 250 );
     });
 
     it( "should reply to the user", function() {
@@ -89,7 +89,7 @@ describe("transitland", function() {
     beforeEach(function(done) {
       dotty.put( this, "room.robot.brain.data.patco.lines.patco", "o-dr4e-portauthoritytransitcorporation" );
       this.room.user.say("alice", "hubot next train on patco from 15th 16th and Locust");
-      setTimeout( done, 1000 );
+      setTimeout( done, 250 );
     });
 
     it( "should reply to the user", function() {
@@ -100,9 +100,9 @@ describe("transitland", function() {
   describe( "set line and stop ids", function() {
 
     beforeEach(function(done) {
-      this.room.user.say("alice", "hubot line PATCO id is o-dr4e-portauthoritytransitcorporation");
-      this.room.user.say("alice", "hubot stop 15th 16th and Locust id is s-dr4e382mxm-15~16thandlocust");
-      setTimeout( done, 1000 );
+      this.room.user.say("alice", "hubot transit line PATCO id is o-dr4e-portauthoritytransitcorporation");
+      this.room.user.say("alice", "hubot transit stop 15th 16th and Locust id is s-dr4e382mxm-15~16thandlocust");
+      setTimeout( done, 250 );
     });
 
     it( "should set the line's id and reply to the user", function() {
@@ -123,7 +123,7 @@ describe("transitland", function() {
       dotty.put( this, "room.robot.brain.data.patco.stops.15th 16th and locust", "s-dr4e382mxm-15~16thandlocust" );
 
       this.room.user.say("alice", "hubot next train on patco from 15th 16th and Locust");
-      setTimeout( done, 1000 );
+      setTimeout( done, 250 );
     });
 
     it( "should respond with the upcoming times within an hour", function() {
@@ -140,7 +140,7 @@ describe("transitland", function() {
       this.room.user.say("alice", "hubot forget all transit craps");
       this.room.user.say("alice", "hubot forget all transit lines");
       this.room.user.say("alice", "hubot forget all transit stops");
-      setTimeout( done, 1000 );
+      setTimeout( done, 250 );
     });
 
     it( "should respond with the upcoming times within an hour", function() {
