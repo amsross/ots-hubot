@@ -15,7 +15,8 @@ describe("septa", function() {
     this.room.destroy();
   });
 
-  describe( "should respond if septa is fucked", function() {
+  // this is making calls to the live API during the test
+  describe.skip( "should respond if septa is fucked", function() {
 
     beforeEach(function(done) {
       this.room.user.say("alice", "hubot is septa fucked");
@@ -28,7 +29,8 @@ describe("septa", function() {
     });
   });
 
-  describe( "should say what trains are fucked", function() {
+  // this is making calls to the live API during the test
+  describe.skip( "should say what trains are fucked", function() {
 
     it( "should reply to the user when using 'which'", function( done ) {
       this.room.user.say("alice", "hubot which trains");
