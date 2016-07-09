@@ -5,6 +5,8 @@ describe( "scripts", function() {
 
   require("./jasonisms");
 
+  require("./transitland");
+
   require("./septa");
 
 });
