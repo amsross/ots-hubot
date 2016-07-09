@@ -92,7 +92,7 @@ module.exports = function (robot) {
     var now = moment();
     var params = qs.stringify({
       origin_onestop_id: robot.brain.data.patco.stops[stop],
-      origin_departure_between: now.format("HH:mm:00") + "," + now.add(1, "hour").format("HH:mm:00"),
+      origin_departure_between: now.format("HH:mm:00") + "," + moment.min(now.add(1, "h"), now.endOf("d")).format("HH:mm:00"),
       date: now.format("YYYY-MM-DD"),
     });
     return msg.http("https://transit.land/api/v1/schedule_stop_pairs?" + params ).get()((err, res, body) => {
@@ -111,10 +111,13 @@ module.exports = function (robot) {
         .invoke("join", " to ")
         .value();
 
+      if ( !_.size( trains ) ) {
+        msg.send("I didn't find any trains from " + stop + " in the next hour.");
+        return msg.send("I guess you're beat.");
+      }
+
       msg.send("The next trains from " + stop + " are " + trains.join(", "));
     });
-
-    return msg.send("found it!");
   });
 
   robot.respond(/(stop|line) (.*) onestop id is (.*)/i, function(msg) {
