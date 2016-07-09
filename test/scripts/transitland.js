@@ -100,8 +100,8 @@ describe("transitland", function() {
   describe( "set line and stop ids", function() {
 
     beforeEach(function(done) {
-      this.room.user.say("alice", "hubot line PATCO onestop id is o-dr4e-portauthoritytransitcorporation");
-      this.room.user.say("alice", "hubot stop 15th 16th and Locust onestop id is s-dr4e382mxm-15~16thandlocust");
+      this.room.user.say("alice", "hubot line PATCO id is o-dr4e-portauthoritytransitcorporation");
+      this.room.user.say("alice", "hubot stop 15th 16th and Locust id is s-dr4e382mxm-15~16thandlocust");
       setTimeout( done, 1000 );
     });
 

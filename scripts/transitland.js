@@ -9,8 +9,10 @@
 //
 // Commands:
 //   hubot next train on <line> from <stop> - Find out the next train departure time
-//   hubot stop <stop> onestop id is <id> - Set the onestop id for the stop
-//   hubot line <line> oneline id is <id> - Set the oneline id for the line
+//   hubot transit stop <stop> id is <id> - Set the onestop id for the stop
+//   hubot transit line <line> id is <id> - Set the onestop id for the line
+//   hubot forget all transit stops - Forget all the onestop ids for either stops
+//   hubot forget all transit lines - Forget all the oneline ids for either lines
 //
 // Notes:
 //  None
@@ -116,11 +118,11 @@ module.exports = function (robot) {
         return msg.send("I guess you're beat.");
       }
 
-      msg.send("The next trains from " + stop + " are " + trains.join(", "));
+      msg.send("The next train" + ((_.size(trains) > 1) ? "s" : "")+ " from " + stop + " " + ((_.size(trains) > 1) ? "are" : "is") + " " + trains.join(", "));
     });
   });
 
-  robot.respond(/(stop|line) (.*) onestop id is (.*)/i, function(msg) {
+  robot.respond(/(stop|line) (.*) id is (.*)/i, function(msg) {
     var type = msg.match[1].trim().toLowerCase();
     var name = msg.match[2].trim().toLowerCase();
     var osid = msg.match[3].trim();
