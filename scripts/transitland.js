@@ -129,4 +129,11 @@ module.exports = function (robot) {
     dotty.put( robot, "brain.data.patco." + type + "s." + name, osid );
     return msg.send("onestop id for " + name + " set to " + osid);
   });
+
+  robot.respond(/forget all transit (stop|line)s/i, function(msg) {
+    var type = msg.match[1].trim().toLowerCase();
+
+    dotty.put( robot, "brain.data.patco." + type + "s", {} );
+    return msg.send("Oh shit! I forgot all the transit " + type + "s!");
+  });
 };

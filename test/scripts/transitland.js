@@ -130,4 +130,22 @@ describe("transitland", function() {
       assert.ok(this.room.messages[1][1].match("The next trains from 15th 16th and locust are 10:22pm to Lindenwold, 10:42pm to Lindenwold, 11:02pm to Lindenwold"));
     });
   });
+
+  describe( "forget transit stops and lines", function() {
+
+    beforeEach(function(done) {
+      dotty.put( this, "room.robot.brain.data.patco.lines.patco", "o-dr4e-portauthoritytransitcorporation" );
+      dotty.put( this, "room.robot.brain.data.patco.stops.15th 16th and locust", "s-dr4e382mxm-15~16thandlocust" );
+
+      this.room.user.say("alice", "hubot forget all transit craps");
+      this.room.user.say("alice", "hubot forget all transit lines");
+      this.room.user.say("alice", "hubot forget all transit stops");
+      setTimeout( done, 1000 );
+    });
+
+    it( "should respond with the upcoming times within an hour", function() {
+      assert.ok(this.room.messages[3][1].match("Oh shit! I forgot all the transit lines!"));
+      assert.ok(this.room.messages[4][1].match("Oh shit! I forgot all the transit stops!"));
+    });
+  });
 });
