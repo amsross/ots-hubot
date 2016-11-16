@@ -16,6 +16,8 @@
 // Author:
 //   frank
 
+const pep = require("apep");
+
 module.exports = function (robot) {
   robot.respond(/is septa fucked/i, function(msg) {
     msg
@@ -55,44 +57,61 @@ module.exports = function (robot) {
   });
 
   robot.respond(/why is\s(.)*train\s(.)*late/i, function(msg) {
-    var reasons = [
-      'equipment problems',
-      'a problem with the equipment',
-      'signaling problems',
-      'a problem with signals',
-      'slippery rail season',
-      'inclement weather conditions',
-      'hot rail season',
-      'overheating rail conditions',
-      'overhead wire problems',
-      'caternary displacement syndrome',
-      'communication problems',
-      'railroad congestion',
-      'unusually high volume',
-      'low electrolytes',
-      'irritable bowel syndrome',
-      'a small kitten on the tracks',
-      'a penny on the tracks',
-      'a horse on the tracks',
-      'a family of small horses running alongside the tracks',
-      'it being Friday somewhere',
-      'the conductor being drunk',
-      'the engineer being high',
-      'improper implementation of train.js',
-      'a bear on the tracks',
-      'an unrelated boating accident',
-      'the string cheese incident',
-      'a rogue train',
-      'this economy',
-      'bees',
-      'errant triangulation residuals',
-      'reticulating splines',
-      'wine day',
-      'insufficient memory',
-      'low turn signal fluid',
-      'johansen rod decoupling effect'
-    ];
-    var reason = reasons[Math.floor(Math.random()*reasons.length)];
-    return msg.send('The train is late due to '+reason+'.');
+    "use strict";
+
+    const thingEither = pep.choice("equipment", "train", "economy", "weather", "memory", "decoupling effect", "turn signal fluid", "communication");
+
+    const thingFirst = pep.choice(thingEither, "overhead wire", "signaling", "railroad");
+    const descLast = pep.choice("problems", "congestion");
+
+    const descFirst = pep.choice("rogue", "overheating", "problematic", "congested", "problem with the", "incorrect", "insufficient", "errant", "reticulating", "improper", "johansen rod", "inclement", "unusually high");
+    const thingLast = pep.choice(thingEither, "overhead wires", "signals", "triangulation residuals", "splines", "weather");
+
+    const syndromes = pep.seq(pep.choice("irritable bowel", "caternary displacement"), " syndrome");
+    const seasons = pep.seq(pep.choice("slippery", "wet", "hot", "stubborn", "drunken"), " ", pep.choice("rail", "conductor", "engineer"), " ", pep.choice("season", "day", "week", "month"));
+    const obstructions = pep.seq(pep.choice(
+          pep.seq("a ", pep.choice("half-full 40oz", "penny", "horse", "small kitten", "bear")),
+          pep.seq("an ", pep.choice("elephant", "erotic novella"))
+          ), " on the tracks");
+
+    const problems = pep.choice(
+        pep.seq(pep.choice("signaling", "communication", "equipment", "overhead wire"), " problems"),
+        pep.seq("a problem with", pep.choice("the equipment", "controlled substances", "signals"))
+        );
+
+    const lowX = pep.seq("low ", pep.choice("turn signal fluid", "electrolytes"));
+
+    const blame = pep.seq(pep.choice(
+          pep.seq("the ", pep.choice("conductor", "enginner", "train", "commissioner", "mole people")),
+          pep.choice("Dick Cheney", "Ron Burgundy", "@aaron.com", "Tronald Dump", "Barack Obama", "@jasonbot")
+          ), " being ", pep.choice("drunk", "high"));
+
+    const sayIt = pep.seq(
+        "The train is late due to ",
+        pep.choice(
+          pep.seq(thingFirst, " ", descLast),
+          pep.seq(descFirst, " ", thingLast),
+          obstructions,
+          syndromes,
+          seasons,
+          problems,
+          lowX,
+          blame,
+          pep.choice(
+            "a family of small horses running alongside the tracks",
+            "a rogue train",
+            "an improper implementation of train.js",
+            "an unrelated boating accident",
+            "bees",
+            "it being Friday somewhere",
+            "javascript fatigue",
+            "a feeling of constant regret",
+            "the string cheese incident",
+            "this economy",
+            "unusually high volume",
+            "wine day"
+            )));
+
+    return msg.send(pep.run(sayIt));
   });
 };

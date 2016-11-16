@@ -8,6 +8,7 @@
     "test": "./node_modules/mocha/bin/mocha test"
   },
   "dependencies": {
+    "apep": "^1.3.2",
     "dotty": "0.0.2",
     "fuse.js": "^2.2.0",
     "hubot": "^2.6.5",
