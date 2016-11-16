@@ -64,7 +64,7 @@ module.exports = function (robot) {
     const thingFirst = pep.choice(thingEither, "overhead wire", "signaling", "railroad");
     const descLast = pep.choice("problems", "congestion");
 
-    const descFirst = pep.choice("rogue", "overheating", "problematic", "congested", "problem with the", "incorrect", "insufficient", "errant", "reticulating", "improper", "johansen rod", "inclement", "unusually high");
+    const descFirst = pep.choice("rogue", "overheating", "problematic", "congested", "a problem with the", "incorrect", "insufficient", "errant", "reticulating", "improper", "johansen rod", "inclement", "unusually high");
     const thingLast = pep.choice(thingEither, "overhead wires", "signals", "triangulation residuals", "splines", "weather");
 
     const syndromes = pep.seq(pep.choice("irritable bowel", "caternary displacement"), " syndrome");
@@ -76,7 +76,7 @@ module.exports = function (robot) {
 
     const problems = pep.choice(
         pep.seq(pep.choice("signaling", "communication", "equipment", "overhead wire"), " problems"),
-        pep.seq("a problem with", pep.choice("the equipment", "controlled substances", "signals"))
+        pep.seq("a problem with ", pep.choice("the equipment", "controlled substances", "signals"))
         );
 
     const lowX = pep.seq("low ", pep.choice("turn signal fluid", "electrolytes"));
