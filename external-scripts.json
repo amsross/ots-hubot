@@ -1,14 +1,15 @@
 [
   "hubot-diagnostics",
-  "hubot-eval-js",
   "hubot-google-translate",
   "hubot-help",
   "hubot-heroku-keepalive",
   "hubot-plusplus",
   "hubot-pugme",
-  "hubot-ramda-docs",
   "hubot-redis-brain",
   "hubot-rules",
   "hubot-shipit",
-  "hubot-voting"
+  "hubot-voting",
+  "hubot-ramda-docs",
+  "hubot-eval-js",
+  "hubot-factoids"
 ]
