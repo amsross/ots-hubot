@@ -190,8 +190,8 @@ module.exports = function (robot) {
         h.log(err);
       })
       .otherwise([
-          "Maybe you should work on your communication skills.",
           "For whatever reason, I couldn't find anything like that.",
+          "Maybe you should work on your communication skills.",
       ])
       .ratelimit(1, 1000)
       .each(msg.send.bind(msg));
