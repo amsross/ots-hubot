@@ -132,7 +132,7 @@ module.exports = function (robot) {
 
     return getLineOsid(msg, line, url.format(r.set(r.lensProp("search"), undefined, baseUrlLines)))
       .flatMap(line => {
-        const between = now.format("HH:mm:00") + "," + m.min(now.clone().add(1, "h"), now.clone().endOf("d")).format("HH:mm:00");
+        const now = m().tz(r.prop("timezone", line));
 
         const lineOsid = r.prop("onestop_id", line);
 
@@ -149,7 +149,7 @@ module.exports = function (robot) {
           .flatMap(stop => {
             const stopOsid = r.prop("onestop_id", stop);
 
-            const between = now.format("HH:mm:00") + "," + m.min(now.add(1, "h"), now.endOf("d")).format("HH:mm:00");
+            const between = now.format("HH:mm:00") + "," + m.min(now.clone().add(1, "h"), now.clone().endOf("d")).format("HH:mm:00");
             const schedulesUrl = r.compose(
                 url.format,
                 r.evolve({
