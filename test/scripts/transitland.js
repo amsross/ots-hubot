@@ -19,11 +19,13 @@ describe("transitland", function() {
           "name": "Port Authority Transit Corporation",
           "short_name": "PATCO",
           "onestop_id": "o-dr4e-portauthoritytransitcorporation",
+          "timezone": "America/New_York",
         },
         {
           "name": "Bay Area Rapid Transit",
           "short_name": "BART",
           "onestop_id": "o-9q9-bart",
+          "timezone": "PST",
         }
         ]
       });
@@ -75,7 +77,7 @@ describe("transitland", function() {
   describe( "ask for onestop id for the line if unknown", function() {
 
     beforeEach(function(done) {
-      this.room.user.say("alice", "hubot next train on patco from work");
+      this.room.user.say("alice", "hubot next train on patco from 15-16th and Locust");
       setTimeout( done, 250 );
     });
 
@@ -87,7 +89,12 @@ describe("transitland", function() {
   describe( "ask for onestop id for the stop if unknown", function() {
 
     beforeEach(function(done) {
-      dotty.put( this, "room.robot.brain.data.patco.lines.patco", "o-dr4e-portauthoritytransitcorporation" );
+      dotty.put( this, "room.robot.brain.data.transitland.lines.patco", {
+        "name": "Port Authority Transit Corporation",
+        "short_name": "PATCO",
+        "onestop_id": "o-dr4e-portauthoritytransitcorporation",
+        "timezone": "America/New_York",
+      });
       this.room.user.say("alice", "hubot next train on patco from 15th 16th and Locust");
       setTimeout( done, 250 );
     });
@@ -97,45 +104,34 @@ describe("transitland", function() {
     });
   });
 
-  describe( "set line and stop ids", function() {
-
-    beforeEach(function(done) {
-      this.room.user.say("alice", "hubot transit line PATCO id is o-dr4e-portauthoritytransitcorporation");
-      this.room.user.say("alice", "hubot transit stop 15th 16th and Locust id is s-dr4e382mxm-15~16thandlocust");
-      setTimeout( done, 250 );
-    });
-
-    it( "should set the line's id and reply to the user", function() {
-      assert.equal( this.room.robot.brain.data.patco.lines["patco"], "o-dr4e-portauthoritytransitcorporation" );
-      assert.ok(this.room.messages[2][1].match(/onestop id for patco set to o-dr4e-portauthoritytransitcorporation/))
-    });
-
-    it( "should set the stop's id and reply to the user", function() {
-      assert.equal( this.room.robot.brain.data.patco.stops["15th 16th and locust"], "s-dr4e382mxm-15~16thandlocust" );
-      assert.ok(this.room.messages[3][1].match(/onestop id for 15th 16th and locust set to s-dr4e382mxm-15~16thandlocust/))
-    });
-  });
-
   describe( "find next times for defined trains", function() {
 
     beforeEach(function(done) {
-      dotty.put( this, "room.robot.brain.data.patco.lines.patco", "o-dr4e-portauthoritytransitcorporation" );
-      dotty.put( this, "room.robot.brain.data.patco.stops.15th 16th and locust", "s-dr4e382mxm-15~16thandlocust" );
+      dotty.put( this, "room.robot.brain.data.transitland.lines.patco", {
+        "name": "Port Authority Transit Corporation",
+        "short_name": "PATCO",
+        "onestop_id": "o-dr4e-portauthoritytransitcorporation",
+        "timezone": "America/New_York",
+      });
+      dotty.put( this, "room.robot.brain.data.transitland.stops.15th 16th and locust", {
+        "onestop_id": "s-dr4e382mxm-15~16thandlocust",
+        "name": "15-16th and Locust",
+      });
 
       this.room.user.say("alice", "hubot next train on patco from 15th 16th and Locust");
       setTimeout( done, 250 );
     });
 
     it( "should respond with the upcoming times within an hour", function() {
-      assert.ok(this.room.messages[1][1].match("The next trains from 15th 16th and locust are 10:22pm to Lindenwold, 10:42pm to Lindenwold, 11:02pm to Lindenwold"));
+      assert.ok(this.room.messages[1][1].match("The next trains from 15-16th and Locust are 10:22pm to Lindenwold, 10:42pm to Lindenwold, 11:02pm to Lindenwold"));
     });
   });
 
   describe( "forget transit stops and lines", function() {
 
     beforeEach(function(done) {
-      dotty.put( this, "room.robot.brain.data.patco.lines.patco", "o-dr4e-portauthoritytransitcorporation" );
-      dotty.put( this, "room.robot.brain.data.patco.stops.15th 16th and locust", "s-dr4e382mxm-15~16thandlocust" );
+      dotty.put( this, "room.robot.brain.data.transitland.lines.patco", "o-dr4e-portauthoritytransitcorporation" );
+      dotty.put( this, "room.robot.brain.data.transitland.stops.15th 16th and locust", "s-dr4e382mxm-15~16thandlocust" );
 
       this.room.user.say("alice", "hubot forget all transit craps");
       this.room.user.say("alice", "hubot forget all transit lines");

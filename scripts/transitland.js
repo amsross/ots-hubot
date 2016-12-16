@@ -8,22 +8,117 @@
 //   None
 //
 // Commands:
-//   hubot next train on <line> from <stop> - Find out the next train departure time
-//   hubot transit stop <stop> id is <id> - Set the onestop id for the stop
-//   hubot transit line <line> id is <id> - Set the onestop id for the line
-//   hubot forget all transit stops - Forget all the onestop ids for either stops
-//   hubot forget all transit lines - Forget all the oneline ids for either lines
+//   hubot next train on <line> from <stop> - Find out the next train departure times
+//   hubot forget all transit stops - Forget all the onestop ids for stops
+//   hubot forget all transit lines - Forget all the oneline ids for lines
 //
 // Notes:
 //  None
 //
 // Author:
 //   amsross
-var qs = require("querystring");
-var _ = require("underscore");
-var dotty = require("dotty");
-var moment = require("moment");
-var Fuse = require("fuse.js");
+const d = require("dotty");
+const h = require("highland");
+const m = require("moment-timezone");
+const r = require("ramda");
+const F = require("fuse.js");
+const url = require("url");
+const request = require("request");
+
+const baseUrlLines = url.parse("https://transit.land/api/v1/operators?offset=0&per_page=100&sort_key=id&sort_order=asc", true);
+const baseUrlStops = url.parse("https://transit.land/api/v1/stops?offset=0&per_page=100&sort_key=id&sort_order=asc&served_by=foo", true);
+const baseUrlSchedule = url.parse("https://transit.land/api/v1/schedule_stop_pairs?offset=10&per_page=100&sort_key=id&sort_order=asc&origin_onestop_id=foo&origin_departure_between=foo&date=foo", true);
+
+const findOperator = r.curry((msg, line, endpoint, result) => {
+
+  const operators = [].concat(r.prop("operators", result));
+
+  const fuse = new F(operators, {
+    threshold: 0.2,
+    keys: [
+    { name: "short_name", weight: 0.7 },
+    { name: "name", weight: 0.3 },
+    ],
+  });
+
+  const matches = fuse.search(line);
+  const nextEndpoint = r.path(["meta", "next"], result);
+
+  if (r.length(matches)) return h(matches);
+  if (nextEndpoint) return getLineOsid(msg, line, nextEndpoint);
+  throw new Error(`no line found for ${line}`);
+});
+
+const getLineOsid = (msg, line, endpoint) => {
+
+  // check the brain first
+  return h([r.view(r.lensPath(["brain", "data", "transitland", "lines", line]), msg.robot)])
+    .compact()
+    // if there's nothing matching in the brain, hit the api
+    .otherwise(() => {
+      return h.wrapCallback(request, (res, body) => body)(endpoint)
+        .compact()
+        .map(JSON.parse)
+        // if there aren't any operators, we can't do anything
+        .filter(r.path(["operators"]))
+        .otherwise(() => {throw new Error(`invalid response from ${endpoint}`)})
+        // if there's no "next" url, we can't recurse
+        .flatMap(findOperator(msg, line, endpoint))
+        .take(1)
+        .pick(["name", "short_name", "onestop_id", "timezone"])
+        .tap(result => {
+          // store this in for later
+          dotty.put(msg.robot, ["brain", "data", "transitland", "lines", line], result);
+          msg.send(`By "${line}", I assume you meant "${result.name}"`);
+        });
+    });
+};
+
+const findStop = r.curry((msg, stop, endpoint, result) => {
+
+  const stops = [].concat(r.prop("stops", result));
+
+  const fuse = new F(stops, {
+    threshold: 0.3,
+    keys: ["name"],
+  });
+
+  const matches = fuse.search(stop);
+  const nextEndpoint = r.path(["meta", "next"], result);
+
+  // if there's a match, return that
+  if (r.length(matches)) return h(matches);
+  // if there is a next endpoint, hit it
+  if (nextEndpoint) return getStopOsid(msg, stop, nextEndpoint);
+  // uh-oh
+  throw new Error(`no stop found for ${stop}`);
+});
+
+const getStopOsid = r.curry((msg, stop, endpoint) => {
+
+  // check the brain first
+  return h([r.view(r.lensPath(["brain", "data", "transitland", "stops", stop]), msg.robot)])
+    .compact()
+    // if there's nothing matching in the brain, hit the api
+    .otherwise(() => {
+      return h.wrapCallback(request, (res, body) => body)(endpoint)
+        .compact()
+        .map(JSON.parse)
+        // if there aren't any operators, we can't do anything
+        .filter(r.path(["stops"]))
+        .otherwise(() => {throw new Error(`invalid response from ${endpoint}`)})
+        // if there's no "next" url, we can't recurse
+        .flatMap(findStop(msg, stop, endpoint))
+        .take(1)
+        .pick(["name", "short_name", "onestop_id", "timezone"])
+        .tap(result => {
+          // store this in for later
+          dotty.put(msg.robot, ["brain", "data", "transitland", "stops", stop], result);
+          msg.send(`By "${stop}", I assume you meant "${result.name}"`);
+        });
+    });
+});
+
 
 module.exports = function (robot) {
 
@@ -35,110 +130,76 @@ module.exports = function (robot) {
       return msg.reply("You need to tell me the line and the stop");
     }
 
-    if ( !dotty.get( robot, "brain.data.patco.lines." + line ) ) {
-      var params = qs.stringify({
-        per_page: 1000,
-      });
-      return msg.http("https://transit.land/api/v1/operators?" + params).get()((err, res, body) => {
+    return getLineOsid(msg, line, url.format(r.set(r.lensProp("search"), undefined, baseUrlLines)))
+      .flatMap(line => {
+        const now = m("2016-12-15T12:00:00-05:00").tz(r.prop("timezone", line));
 
-        var operators = _.chain(JSON.parse(body))
-          .pick("operators")
-          .values()
-          .flatten()
-          .map(_.partial(_.pick, _, "onestop_id", "name", "short_name"))
-          .value();
+        const lineOsid = r.prop("onestop_id", line);
 
-        var fuse = new Fuse(operators, {
-          keys: [{
-            name: "short_name",
-            weight: 0.7,
-          }, {
-            name: "name",
-            weight: 0.3,
-          }],
-        });
-        var result = _.first(fuse.search(line));
+        const stopsUrl = r.compose(
+            url.format,
+            r.evolve({
+              "search": r.always(undefined),
+              "query": {
+                "served_by": r.always(lineOsid),
+              },
+            }))(baseUrlStops);
 
-        if ( !result ) {
-          return msg.send("Can you tell me the onestop id for " + line + "?");
-        }
-        msg.send("By \"" + line + "\", I assume you meant \"" + result.name + "\"");
-        dotty.put( robot, "brain.data.patco.lines." + line, result.onestop_id );
-      });
-    }
+        return getStopOsid(msg, stop, stopsUrl)
+          .flatMap(stop => {
+            const stopOsid = r.prop("onestop_id", stop);
 
-    if ( !dotty.get( robot, "brain.data.patco.stops." + stop ) ) {
-      var params = qs.stringify({
-        served_by: robot.brain.data.patco.lines[line],
-      });
-      return msg.http("https://transit.land/api/v1/stops?" + params ).get()((err, res, body) => {
+            const between = now.format("HH:mm:00") + "," + m.min(now.add(1, "h"), now.endOf("d")).format("HH:mm:00");
+            const schedulesUrl = r.compose(
+                url.format,
+                r.evolve({
+                  "search": r.always(undefined),
+                  "query": {
+                    "origin_onestop_id": r.always(stopOsid),
+                    "origin_departure_between": r.always(between),
+                    "date": r.always(now.format("YYYY-MM-DD")),
+                  },
+                }))(baseUrlSchedule);
 
-        var stops = _.chain(JSON.parse(body))
-          .pick("stops")
-          .values()
-          .flatten()
-          .map(_.partial(_.pick, _, "onestop_id", "name"))
-          .value();
-
-        var fuse = new Fuse(stops, { keys: ["name"] });
-        var result = _.first(fuse.search(stop));
-
-        if ( !result ) {
-          return msg.send("Can you tell me the onestop id for " + stop + "?");
-        }
-        msg.send("By \"" + stop + "\", I assume you meant \"" + result.name + "\"");
-        dotty.put( robot, "brain.data.patco.stops." + stop, result.onestop_id );
-      });
-    }
-
-    var now = moment();
-    var params = qs.stringify({
-      origin_onestop_id: robot.brain.data.patco.stops[stop],
-      origin_departure_between: now.format("HH:mm:00") + "," + moment.min(now.add(1, "h"), now.endOf("d")).format("HH:mm:00"),
-      date: now.format("YYYY-MM-DD"),
-    });
-    return msg.http("https://transit.land/api/v1/schedule_stop_pairs?" + params ).get()((err, res, body) => {
-
-      var trains = _.chain(JSON.parse(body))
-        .pick("schedule_stop_pairs")
-        .values()
-        .flatten()
-        .map(_.partial(_.pick, _, "origin_departure_time", "trip_headsign"))
-        .map((train) => {
-          return _.extend(train, {
-            origin_departure_time: moment(now.format("YYYY-MM-DD ") + train.origin_departure_time).format("hh:mma"),
+            return h.wrapCallback(request, (res, body) => body)(schedulesUrl)
+              .compact()
+              .map(JSON.parse)
+              // if there aren't any operators, we can't do anything
+              .filter(r.path(["schedule_stop_pairs"]))
+              .otherwise(() => {throw new Error(`invalid response from ${endpoint}`)})
+              // if there's no "next" url, we can't recurse
+              .pluck(["schedule_stop_pairs"])
+              .flatten()
+              .take(5)
+              .pick(["origin_departure_time", "trip_headsign"])
+              .map(r.evolve({
+                "origin_departure_time": time => {
+                  return m(now.format("YYYY-MM-DD ") + time).format("hh:mma");
+                }
+              }))
+              .map(r.values)
+              .invoke("join", [" to "])
+              .collect()
+              .map(trains => {
+                return "The next train" + ((r.length(trains) > 1) ? "s" : "")+ " from " + stop.name + " " + ((r.length(trains) > 1) ? "are" : "is") + " " + trains.join(", ");
+              });
           });
-        })
-        .map(_.values)
-        .invoke("join", " to ")
-        .value();
-
-      if ( !_.size( trains ) ) {
-        msg.send("I didn't find any trains from " + stop + " in the next hour.");
-        return msg.send("I guess you're beat.");
-      }
-
-      msg.send("The next train" + ((_.size(trains) > 1) ? "s" : "")+ " from " + stop + " " + ((_.size(trains) > 1) ? "are" : "is") + " " + trains.join(", "));
-    });
-  });
-
-  robot.respond(/transit (stop|line) (.*) id is (.*)/i, function(msg) {
-    var type = msg.match[1].trim().toLowerCase();
-    var name = msg.match[2].trim().toLowerCase();
-    var osid = msg.match[3].trim();
-
-    if ( !type || !name || !osid || (type !== "line" && type !== "stop") ) {
-      return msg.reply("You need to tell me the line, the stop, and the onestop id");
-    }
-
-    dotty.put( robot, "brain.data.patco." + type + "s." + name, osid );
-    return msg.send("onestop id for " + name + " set to " + osid);
+      })
+      .errors(err => {
+        // just swallow this
+        h.log(err);
+      })
+      .otherwise([
+          "For whatever reason, I couldn't find anything like that.",
+          "Maybe you should work on your communication skills.",
+      ])
+      .each(msg.send.bind(msg));
   });
 
   robot.respond(/forget all transit (stop|line)s/i, function(msg) {
     var type = msg.match[1].trim().toLowerCase();
 
-    dotty.put( robot, "brain.data.patco." + type + "s", {} );
+    dotty.put( robot, "brain.data.transitland." + type + "s", {} );
     return msg.send("Oh shit! I forgot all the transit " + type + "s!");
   });
 };
