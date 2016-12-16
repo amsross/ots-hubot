@@ -27,7 +27,7 @@ const request = require("request");
 
 const baseUrlLines = url.parse("https://transit.land/api/v1/operators?offset=0&per_page=100&sort_key=id&sort_order=asc", true);
 const baseUrlStops = url.parse("https://transit.land/api/v1/stops?offset=0&per_page=100&sort_key=id&sort_order=asc&served_by=foo", true);
-const baseUrlSchedule = url.parse("https://transit.land/api/v1/schedule_stop_pairs?offset=0&per_page=100&sort_key=origin_arrival_time&sort_order=asc&origin_onestop_id=foo&origin_departure_between=foo&date=foo", true);
+const baseUrlSchedule = url.parse("https://transit.land/api/v1/schedule_stop_pairs?offset=0&per_page=10&sort_key=origin_arrival_time&sort_order=asc&origin_onestop_id=foo&origin_departure_between=foo&date=foo", true);
 
 const findOperator = r.curry((msg, line, endpoint, result) => {
 
@@ -149,7 +149,7 @@ module.exports = function (robot) {
           .flatMap(stop => {
             const stopOsid = r.prop("onestop_id", stop);
 
-            const between = now.format("HH:mm:00") + "," + m.min(now.clone().add(1, "h"), now.clone().endOf("d")).format("HH:mm:00");
+            const between = now.format("HH:mm:00") + "," + now.clone().endOf("d").format("HH:mm:00");
             const schedulesUrl = r.compose(
                 url.format,
                 r.evolve({
