@@ -26,7 +26,7 @@ const url = require("url");
 const request = require("request");
 
 const baseUrlLines = url.parse("https://transit.land/api/v1/operators?offset=0&per_page=100&sort_key=id&sort_order=asc", true);
-const baseUrlStops = url.parse("https://transit.land/api/v1/stops?offset=0&per_page=100&sort_key=id&sort_order=asc&served_by=foo", true);
+const baseUrlStops = url.parse("https://transit.land/api/v1/stops?offset=0&per_page=100&sort_key=id&sort_order=asc&served_by_vehicle_types=rail&served_by=foo", true);
 const baseUrlSchedule = url.parse("https://transit.land/api/v1/schedule_stop_pairs?offset=0&per_page=10&sort_key=origin_arrival_time&sort_order=asc&origin_onestop_id=foo&origin_departure_between=foo&date=foo", true);
 
 const findOperator = r.curry((msg, line, endpoint, result) => {
