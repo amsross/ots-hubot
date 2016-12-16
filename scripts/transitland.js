@@ -17,7 +17,7 @@
 //
 // Author:
 //   amsross
-const d = require("dotty");
+const dotty = require("dotty");
 const h = require("highland");
 const m = require("moment-timezone");
 const r = require("ramda");
