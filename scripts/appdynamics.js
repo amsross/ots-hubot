@@ -21,7 +21,7 @@ var toMarkdown = require("to-markdown");
 module.exports = function(robot) {
   robot.router.post('/appdynamics/alert', function(req, res) {
     var room = {
-      default: "@pat"
+      default: "#data-appd-alerts"
     };
 
     var data = req.body;
