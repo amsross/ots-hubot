@@ -1,6 +1,6 @@
 var Helper = require("hubot-test-helper")
 
-describe.only("appdynamics", function() {
+describe("appdynamics", function() {
 
   before(function() {
     this.helper = new Helper("../../scripts/appdynamics.js");
