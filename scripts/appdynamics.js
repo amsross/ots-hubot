@@ -19,11 +19,7 @@
 var slackify = require("slackify-html");
 
 module.exports = function(robot) {
-  robot.router.post('/appdynamics/alert', function(req, res) {
-    var room = {
-      default: "#data-appd-alerts"
-    };
-
+  robot.router.post('/appdynamics/alert/:room?', function(req, res) {
     var data = req.body;
 
     // Some data exists
@@ -63,7 +59,7 @@ module.exports = function(robot) {
       };
 
       // Default can be changed to add channels based on summary message / display name or whatever
-      robot.messageRoom(room["default"], payload);
+      robot.messageRoom(req.params.room || "#data-appd-alerts", payload);
     }
 
     // End response
