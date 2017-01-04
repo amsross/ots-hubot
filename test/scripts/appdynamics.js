@@ -7,7 +7,7 @@ describe.only("appdynamics", function() {
   });
 
   beforeEach(function() {
-    this.room = this.helper.createRoom({name: "pat"});
+    this.room = this.helper.createRoom();
   });
 
   afterEach(function() {
@@ -32,7 +32,7 @@ describe.only("appdynamics", function() {
       setTimeout( done, 250 );
     });
 
-    it( "should reply to the user", function() {
+    it( "should send message to specified room", function() {
       var message = this.room.messages[0][1];
 
       assert(message.title, "title exists");
