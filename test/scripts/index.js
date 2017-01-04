@@ -9,4 +9,6 @@ describe( "scripts", function() {
 
   require("./septa");
 
+  require("./appdynamics");
+
 });
