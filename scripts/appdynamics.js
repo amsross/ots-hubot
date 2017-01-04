@@ -16,12 +16,12 @@
 // Author:
 //   pclark
 
-var toMarkdown = require("to-markdown");
+var slackify = require("slackify-html");
 
 module.exports = function(robot) {
   robot.router.post('/appdynamics/alert', function(req, res) {
     var room = {
-      default: "#data-appd-alerts"
+      default: "@pat"
     };
 
     var data = req.body;
@@ -30,10 +30,10 @@ module.exports = function(robot) {
     if (data) {
       var deepLink = data.deepLink;
       var displayName = data.displayName;
-      var summaryMessage = toMarkdown(data.summaryMessage);
+      var summaryMessage = slackify(data.summaryMessage);
       var tierName = data.tierName;
       var nodeName = data.nodeName;
-      var eventMessage = toMarkdown(data.eventMessage);
+      var eventMessage = slackify(data.eventMessage);
 
       var payload = {
         "title": "AppDynamics Alert",
@@ -59,7 +59,8 @@ module.exports = function(robot) {
             "title": "Detail",
             "value": eventMessage,
             "short": false
-          }]
+          }],
+          "mrkdwn_in": ["fields"]
         }]
       };
 

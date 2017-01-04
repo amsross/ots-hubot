@@ -33,7 +33,7 @@
     "moment-timezone": "^0.5.10",
     "ramda": "^0.22.1",
     "request": "^2.79.0",
-    "to-markdown": "^3.0.3",
+    "slackify-html": "git+https://github.com/onetwosee/slackify-html",
     "underscore": "^1.8.3"
   },
   "engines": {
