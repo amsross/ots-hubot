@@ -37,8 +37,6 @@ describe("appdynamics", function() {
 
       assert(message.title, "title exists");
       assert(message.text, "text exists");
-      assert(message.username, "username exists");
-      assert(message.icon_emoji, "icon_emoji exists");
       assert(message.mrkdwn, "mrkdwn exists");
       assert(message.attachments, "attachments exists");
 

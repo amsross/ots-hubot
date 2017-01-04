@@ -38,8 +38,6 @@ module.exports = function(robot) {
       var payload = {
         "title": "AppDynamics Alert",
         "text": "<"+deepLink+"|"+displayName+">",
-        "username": "Doomguy",
-        "icon_emoji": ":finnadie:",
         "mrkdwn": true,
         "attachments": [{
           "color": "danger",
