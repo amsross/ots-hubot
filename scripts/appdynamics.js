@@ -21,6 +21,17 @@ var slackify = require("slackify-html");
 module.exports = function(robot) {
   robot.router.post('/appdynamics/alert/:room?', function(req, res) {
     var data = req.body;
+    var room = req.params.room;
+
+    // Stupid room logic (because of appd)
+    // Basically, channels don't need #, users do.
+    // e.g. /appdynamics/alert/data-appd-alerts
+    // e.g. /appdynamics/alert/@pat
+    if (room && room.indexOf("@") !== 0) {
+      room = "#" + room;
+    } else if (!room) {
+      room = "#data-appd-alerts";
+    }
 
     // Some data exists
     if (data) {
@@ -59,7 +70,7 @@ module.exports = function(robot) {
       };
 
       // Default can be changed to add channels based on summary message / display name or whatever
-      robot.messageRoom(req.params.room || "#data-appd-alerts", payload);
+      robot.messageRoom(room, payload);
     }
 
     // End response
