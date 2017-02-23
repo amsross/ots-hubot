@@ -10,7 +10,7 @@
 // Commands:
 //   hubot next train on <line> from <stop> - Find out the next train departure times
 //   hubot forget all transit stops - Forget all the onestop ids for stops
-//   hubot forget all transit lines - Forget all the oneline ids for lines
+//   hubot forget all transit lines - Forget all the onestop ids for lines
 //
 // Notes:
 //  None
