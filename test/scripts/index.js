@@ -9,6 +9,8 @@ describe( "scripts", function() {
 
   require("./septa");
 
+  require("./supplies");
+
   require("./appdynamics");
 
 });
