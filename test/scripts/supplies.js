@@ -19,7 +19,7 @@ describe("supplies", function() {
     beforeEach(function(done) {
       assert.equal(dotty.get(this.room, "robot.brain.data.supplies.@ralph"), undefined, "empty list");
       this.room.user.say("alice", "hubot supplies add @ralph soap, water, spit, moar beer");
-      setTimeout( done, 500 );
+      setTimeout( done, 250 );
     });
 
     it( "should reply to the user", function( done ) {

@@ -34,8 +34,12 @@ module.exports = function (robot) {
       ]),
       r.split(" "))(match);
 
-    const currentList = dotty.get(robot, `brain.data.supplies.${user}`) || [];
-    dotty.put(robot, `brain.data.supplies.${user}`, currentList.concat(supplies));
+    r.compose(
+      r.partial(dotty.put, [robot, `brain.data.supplies.${user}`]),
+      r.concat(supplies),
+      r.reject(r.isNil),
+      r.unnest, r.of,
+      r.partialRight(dotty.get, [`brain.data.supplies.${user}`]))(robot);
 
     return msg.send(`Added ${supplies.join(", ")} to ${user}'s list`);
   });
