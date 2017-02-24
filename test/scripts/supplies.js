@@ -69,29 +69,42 @@ describe("supplies", function() {
 
   describe( "should show a user's list on request", function() {
 
-    beforeEach(function(done) {
+    beforeEach(function() {
+      dotty.put(this.room, "robot.brain.data.supplies.alice", [
+        "soap",
+        "paper towels",
+      ]);
       dotty.put(this.room, "robot.brain.data.supplies.ralph", [
         "water",
         "spit",
         "moar beer",
       ]);
-      this.room.user.say("ralph", "hubot supplies show");
-      setTimeout( done, 250 );
     });
 
-    it( "should reply to the user", function( done ) {
-      assert.deepEqual(this.room.messages, [
-        ["ralph", "hubot supplies show"],
-        ["hubot", "@ralph's list is:\n * water\n * spit\n * moar beer"],
-      ]);
+    it( "should reply with the list for the asking user", function( done ) {
 
-      assert.deepEqual(dotty.get(this.room, "robot.brain.data.supplies.ralph"), [
-        "water",
-        "spit",
-        "moar beer",
-      ], "updated list");
+      this.room.user.say("ralph", "hubot supplies show");
+      setTimeout(() => {
+        assert.deepEqual(this.room.messages, [
+          ["ralph", "hubot supplies show"],
+          ["hubot", "@ralph's list is:\n * water\n * spit\n * moar beer"],
+        ]);
 
-      done();
+        done();
+      }, 250 );
+    });
+
+    it( "should reply with the list for the specified user", function( done ) {
+
+      this.room.user.say("ralph", "hubot supplies show @alice");
+      setTimeout(() => {
+        assert.deepEqual(this.room.messages, [
+          ["ralph", "hubot supplies show @alice"],
+          ["hubot", "@alice's list is:\n * soap\n * paper towels"],
+        ]);
+
+        done();
+      }, 250);
     });
   });
 });

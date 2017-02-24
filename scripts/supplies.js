@@ -12,6 +12,7 @@
 //   hubot supplies add <user> <supply>, <supply>, <supply>, ...
 //   hubot supplies remove <user> <supply>
 //   hubot supplies show <user>
+//   hubot supplies show [current user]
 //
 // Notes:
 //  None
@@ -65,10 +66,16 @@ module.exports = function (robot) {
     return msg.send(`Removed ${supplies.join(", ")} from @${user}'s list`);
   });
 
-  robot.respond(/supplies show/i, function(msg) {
+  robot.respond(/supplies show(.*)/i, function(msg) {
 
-    const user = msg.message.user.id;
-    const supplies = dotty.get(robot, `brain.data.supplies.${user}`);
+    const { user } = r.compose(
+      r.objOf("user"),
+      r.replace("@", ""),
+      r.when(r.isEmpty, r.always(msg.message.user.name)),
+      r.trim(),
+      r.nth(1),
+      r.prop("match"))(msg) ;
+    const supplies = dotty.get(robot, `brain.data.supplies.${user}`) || [];
 
     return msg.send(`@${user}'s list is:\n * ${supplies.join("\n * ")}`);
   });
