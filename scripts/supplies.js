@@ -29,7 +29,7 @@ module.exports = function (robot) {
 
     const { user, supplies } = r.compose(
       r.converge(r.merge, [
-        r.compose(r.objOf("user"), r.head),
+        r.compose(r.objOf("user"), r.replace("@", ""), r.head),
         r.compose(r.objOf("supplies"), r.map(r.trim), r.split(","), r.join(" "), r.tail),
       ]),
       r.split(" "))(match);
@@ -41,7 +41,7 @@ module.exports = function (robot) {
       r.unnest, r.of,
       r.partialRight(dotty.get, [`brain.data.supplies.${user}`]))(robot);
 
-    return msg.send(`Added ${supplies.join(", ")} to ${user}'s list`);
+    return msg.send(`Added ${supplies.join(", ")} to @${user}'s list`);
   });
 
   robot.respond(/supplies remove (.*)/i, function(msg) {
@@ -50,7 +50,7 @@ module.exports = function (robot) {
 
     const { user, supplies } = r.compose(
       r.converge(r.merge, [
-        r.compose(r.objOf("user"), r.head),
+        r.compose(r.objOf("user"), r.replace("@", ""), r.head),
         r.compose(r.objOf("supplies"), r.map(r.trim), r.split(","), r.join(" "), r.tail),
       ]),
       r.split(" "))(match);
@@ -62,7 +62,15 @@ module.exports = function (robot) {
       r.unnest, r.of,
       r.partialRight(dotty.get, [`brain.data.supplies.${user}`]))(robot);
 
-    return msg.send(`Removed ${supplies.join(", ")} from ${user}'s list`);
+    return msg.send(`Removed ${supplies.join(", ")} from @${user}'s list`);
+  });
+
+  robot.respond(/supplies show/i, function(msg) {
+
+    const user = msg.message.user.id;
+    const supplies = dotty.get(robot, `brain.data.supplies.${user}`);
+
+    return msg.send(`@${user}'s list is:\n * ${supplies.join("\n * ")}`);
   });
 };
 
