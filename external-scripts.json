@@ -12,5 +12,6 @@
   "hubot-ramda-docs",
   "hubot-eval-js",
   "hubot-factoids",
-  "hubot-standup"
+  "hubot-standup",
+  "hubot-auth"
 ]

@@ -13,6 +13,7 @@
     "fuse.js": "^2.6.1",
     "highland": "^2.10.1",
     "hubot": "^2.6.5",
+    "hubot-auth": "^2.1.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-eval-js": "^1.0.11",
     "hubot-factoids": "^1.0.0",
