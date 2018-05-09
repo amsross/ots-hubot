@@ -19,7 +19,8 @@ module.exports = function( robot ) {
 
   var datagrams = [
     "http://www.basement.org/c/images/blog/night-cycle.gif",
-    "http://blogs.msdn.com/blogfiles/mikewalker/WindowsLiveWriter/MappingCurrentStateArchitecturesacrossth_AFD0/image_10.png"
+    "http://blogs.msdn.com/blogfiles/mikewalker/WindowsLiveWriter/MappingCurrentStateArchitecturesacrossth_AFD0/image_10.png",
+    "It's like sexual chocolate"
   ];
 
   robot.hear( /datagram/i, function( res ) {
