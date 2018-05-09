@@ -76,7 +76,7 @@ module.exports = function( robot ) {
     "Bob Egan he fell down the steps practicing captioning precious ankles dislocated jaw dislocated Seps any Christmas ankle Sonido",
     ];
 
-    robot.hear( /nuance/i, function( res ) {
+    robot.hear( /\b(nuance|hr|bob egan|vrex)\b/i, function( res ) {
       return res.send( res.random( nuance ) );
     });
 
