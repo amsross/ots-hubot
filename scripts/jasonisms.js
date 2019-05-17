@@ -19,7 +19,7 @@ module.exports = function( robot ) {
 
   var datagrams = [
     "http://www.basement.org/c/images/blog/night-cycle.gif",
-    "http://blogs.msdn.com/blogfiles/mikewalker/WindowsLiveWriter/MappingCurrentStateArchitecturesacrossth_AFD0/image_10.png",
+    "http://i.imgur.com/n3KBi8A.png",
     "It's like sexual chocolate"
   ];
 
