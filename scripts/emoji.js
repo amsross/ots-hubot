@@ -1,13 +1,14 @@
 const fs = require('fs');
+const path = require('path');
 var emojiList = [];
 
 module.exports = function (robot) {
 
-  robot.respond(/(.*) emoji/i, function(msg) {
+  robot.hear(/(.*) emoji/i, function(msg) {
     const match = msg.match[1].trim();
 
     if(!emojiList.length){
-      parseFile('./emojiList.txt').then(() => respond(msg, match));
+      parseFile(path.join(__dirname, '/emojiList.txt')).then(() => respond(msg, match));
     }else{
       respond(msg, match);
     }
