@@ -28,13 +28,13 @@
     "hubot-rules": "^0.1.1",
     "hubot-scripts": "^2.17.2",
     "hubot-shipit": "^0.2.0",
-    "hubot-slack": "^4.2.2",
+    "hubot-slack": "^4.7.1",
     "hubot-standup": "^0.1.8",
     "hubot-voting": "^1.0.0",
-    "moment": "^2.14.1",
+    "moment": "^2.24.0",
     "moment-timezone": "^0.5.10",
     "ramda": "^0.22.1",
-    "request": "^2.79.0",
+    "request": "^2.88.0",
     "slackify-html": "git+https://github.com/onetwosee/slackify-html",
     "underscore": "^1.8.3"
   },
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "coffee-script": "^1.10.0",
-    "hubot-test-helper": "^1.4.4",
+    "hubot-test-helper": "^1.9.0",
     "mocha": "^2.5.3",
     "nock": "^8.0.0"
   }
